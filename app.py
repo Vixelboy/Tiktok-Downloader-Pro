@@ -1,3 +1,16 @@
+import streamlit as st
+import streamlit.components.v1 as components
+
+# 1. Konfigurasi Halaman Streamlit
+st.set_page_config(
+    page_title="TikTok Downloader Pro",
+    page_icon="🚀",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+# 2. Kode HTML, CSS, dan JS kamu dimasukkan ke dalam variabel string
+html_code = """
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,6 +26,9 @@
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
             min-height: 100vh;
+            color: white;
+            margin: 0;
+            padding: 20px;
         }
 
         .glass {
@@ -56,10 +72,9 @@
         }
     </style>
 </head>
-<body class="text-white p-4 md:p-8">
+<body>
 
     <div class="max-w-4xl mx-auto">
-        <!-- Header -->
         <header class="text-center mb-12">
             <div class="inline-flex items-center justify-center p-3 mb-4 rounded-2xl glass border border-white/10">
                 <i data-lucide="download-cloud" class="w-8 h-8 text-[#ff0050]"></i>
@@ -68,7 +83,6 @@
             <p class="text-gray-400">Unduh video (tanpa watermark) & foto slideshow TikTok dengan mudah.</p>
         </header>
 
-        <!-- Input Area -->
         <div class="glass p-6 rounded-3xl shadow-2xl border border-white/10 mb-8">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="relative flex-1">
@@ -97,56 +111,43 @@
             </p>
         </div>
 
-        <!-- Result Area -->
-        <div id="resultArea" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
-            <!-- Info Card -->
+        <div id="resultArea" class="hidden space-y-6">
             <div class="glass rounded-3xl overflow-hidden border border-white/10">
                 <div class="md:flex">
-                    <!-- Thumbnail/Preview -->
                     <div class="md:w-1/3 relative group bg-black flex items-center justify-center">
                         <img id="videoThumb" src="" alt="Thumbnail" class="w-full h-full object-contain aspect-[9/16]">
-                        <div id="mediaBadge" class="absolute top-4 right-4 bg-black/60 px-3 py-1 rounded-full text-xs font-bold border border-white/20">
-                            VIDEO
-                        </div>
+                        <div id="mediaBadge" class="absolute top-4 right-4 bg-black/60 px-3 py-1 rounded-full text-xs font-bold border border-white/20">VIDEO</div>
                     </div>
                     
-                    <!-- Details & Actions -->
                     <div class="md:w-2/3 p-6 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-3 mb-4">
                                 <img id="authorImg" src="" class="w-12 h-12 rounded-full border border-white/20">
                                 <div>
-                                    <h3 id="authorName" class="font-bold text-lg leading-tight tracking-wide">Username</h3>
+                                    <h3 id="authorName" class="font-bold text-lg leading-tight">Username</h3>
                                     <p id="authorUsername" class="text-gray-400 text-sm">@nickname</p>
                                 </div>
                             </div>
-                            <p id="videoDesc" class="text-gray-300 text-sm mb-6 line-clamp-3 italic">
-                                Judul konten akan muncul di sini...
-                            </p>
+                            <p id="videoDesc" class="text-gray-300 text-sm mb-6 italic">Judul konten...</p>
                             
-                            <!-- Stats Bar -->
                             <div class="flex gap-6 mb-8">
                                 <div class="text-center">
-                                    <p class="text-[10px] text-gray-500 uppercase tracking-tighter mb-1 font-bold">Views</p>
+                                    <p class="text-[10px] text-gray-500 uppercase font-bold">Views</p>
                                     <p id="viewCount" class="font-bold text-sm text-[#00f2ea]">0</p>
                                 </div>
                                 <div class="text-center">
-                                    <p class="text-[10px] text-gray-500 uppercase tracking-tighter mb-1 font-bold">Likes</p>
+                                    <p class="text-[10px] text-gray-500 uppercase font-bold">Likes</p>
                                     <p id="likeCount" class="font-bold text-sm text-[#ff0050]">0</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-[10px] text-gray-500 uppercase tracking-tighter mb-1 font-bold">Shares</p>
-                                    <p id="shareCount" class="font-bold text-sm text-white">0</p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button id="hdBtn" class="flex items-center justify-center gap-2 bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50">
+                            <button id="hdBtn" class="flex items-center justify-center gap-2 bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors">
                                 <i data-lucide="video" class="w-5 h-5"></i>
                                 <span class="btn-label">Unduh Video</span>
                             </button>
-                            <button id="musicBtn" class="flex items-center justify-center gap-2 bg-white/10 text-white font-bold py-4 rounded-xl hover:bg-white/20 transition-colors border border-white/10 disabled:opacity-50">
+                            <button id="musicBtn" class="flex items-center justify-center gap-2 bg-white/10 text-white font-bold py-4 rounded-xl hover:bg-white/20 transition-colors border border-white/10">
                                 <i data-lucide="music" class="w-5 h-5"></i>
                                 <span class="btn-label">Unduh Audio</span>
                             </button>
@@ -155,23 +156,17 @@
                 </div>
             </div>
 
-            <!-- Photos Gallery (Hidden by default) -->
             <div id="photosSection" class="hidden space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold flex items-center gap-2">
-                        <i data-lucide="images" class="w-6 h-6 text-[#00f2ea]"></i>
-                        Galeri Foto <span id="photoCounter" class="text-gray-500 text-sm font-normal">(0)</span>
-                    </h2>
-                </div>
-                <div id="photosGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                    <!-- Photos will be injected here -->
-                </div>
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="images" class="w-6 h-6 text-[#00f2ea]"></i>
+                    Galeri Foto <span id="photoCounter" class="text-gray-500 text-sm">(0)</span>
+                </h2>
+                <div id="photosGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar"></div>
             </div>
         </div>
 
-        <!-- Footer Info -->
         <footer class="mt-12 text-center text-gray-500 text-sm">
-            <p>&copy; 2024 TikTok Downloader Pro. by : @vixelboy</p>
+            <p>&copy; 2026 TikTok Downloader Pro. by : @vixelboy</p>
         </footer>
     </div>
 
@@ -189,17 +184,13 @@
             const hdBtn = document.getElementById('hdBtn');
 
             const url = urlInput.value.trim();
-            if (!url) {
-                showError("Mohon masukkan tautan video/foto TikTok.");
-                return;
-            }
+            if (!url) { showError("Mohon masukkan tautan TikTok."); return; }
 
             errorMessage.classList.add('hidden');
             btnText.textContent = "Memproses...";
             btnLoader.classList.remove('hidden');
             fetchBtn.disabled = true;
             resultArea.classList.add('hidden');
-            photosSection.classList.add('hidden');
 
             try {
                 const response = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
@@ -207,8 +198,6 @@
 
                 if (result.code === 0 && result.data) {
                     const data = result.data;
-
-                    // Basic Info
                     document.getElementById('videoThumb').src = data.cover;
                     document.getElementById('authorImg').src = data.author.avatar;
                     document.getElementById('authorName').textContent = data.author.nickname;
@@ -216,37 +205,22 @@
                     document.getElementById('videoDesc').textContent = data.title || "Tanpa deskripsi";
                     document.getElementById('viewCount').textContent = formatNumber(data.play_count);
                     document.getElementById('likeCount').textContent = formatNumber(data.digg_count);
-                    document.getElementById('shareCount').textContent = formatNumber(data.share_count);
 
-                    // Check if content is Images or Video
-                    const mediaBadge = document.getElementById('mediaBadge');
                     if (data.images && data.images.length > 0) {
-                        // IT'S A SLIDESHOW
-                        mediaBadge.textContent = "FOTO";
-                        mediaBadge.className = "absolute top-4 right-4 bg-[#00f2ea]/80 text-black px-3 py-1 rounded-full text-xs font-bold border border-white/20";
-                        
-                        // Hide main video download button (or keep it if there's a slideshow video available)
-                        if (!data.play) hdBtn.classList.add('hidden');
-                        
-                        // Setup Photos Gallery
                         renderPhotos(data.images, data.id);
                         photosSection.classList.remove('hidden');
+                        hdBtn.classList.add('hidden');
                     } else {
-                        // IT'S A VIDEO
-                        mediaBadge.textContent = "VIDEO";
-                        mediaBadge.className = "absolute top-4 right-4 bg-[#ff0050]/80 text-white px-3 py-1 rounded-full text-xs font-bold border border-white/20";
+                        photosSection.classList.add('hidden');
                         hdBtn.classList.remove('hidden');
+                        hdBtn.onclick = () => window.open(data.play, '_blank');
                     }
 
-                    // Setup direct download buttons
-                    const musicBtn = document.getElementById('musicBtn');
-                    hdBtn.onclick = () => downloadFile(data.play, `tiktok_video_${data.id}.mp4`, hdBtn);
-                    musicBtn.onclick = () => downloadFile(data.music, `tiktok_audio_${data.id}.mp3`, musicBtn);
-
+                    document.getElementById('musicBtn').onclick = () => window.open(data.music, '_blank');
                     resultArea.classList.remove('hidden');
                     lucide.createIcons();
                 } else {
-                    showError(result.msg || "Gagal mengambil data. Pastikan konten publik.");
+                    showError("Gagal mengambil data.");
                 }
             } catch (error) {
                 showError("Terjadi kesalahan jaringan.");
@@ -259,77 +233,19 @@
 
         function renderPhotos(images, contentId) {
             const grid = document.getElementById('photosGrid');
-            const counter = document.getElementById('photoCounter');
             grid.innerHTML = '';
-            counter.textContent = `(${images.length})`;
-
             images.forEach((imgUrl, index) => {
                 const card = document.createElement('div');
                 card.className = "relative group glass rounded-xl overflow-hidden aspect-[9/16]";
-                card.innerHTML = `
-                    <img src="${imgUrl}" class="w-full h-full object-cover" loading="lazy">
-                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button onclick="downloadFile('${imgUrl}', 'tiktok_photo_${contentId}_${index+1}.jpg', this)" class="bg-white text-black p-2 rounded-full shadow-lg hover:scale-110 transition-transform">
-                            <i data-lucide="download" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                `;
+                card.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center"><button onclick="window.open('${imgUrl}', '_blank')" class="bg-white text-black p-2 rounded-full"><i data-lucide="download" class="w-5 h-5"></i></button></div>`;
                 grid.appendChild(card);
             });
-        }
-
-        async function downloadFile(url, filename, element) {
-            let originalContent = "";
-            let isButton = element.tagName === 'BUTTON' && element.querySelector('.btn-label');
-            
-            try {
-                if (isButton) {
-                    const label = element.querySelector('.btn-label');
-                    originalContent = label.textContent;
-                    label.textContent = "Proses...";
-                    element.classList.add('downloading');
-                } else {
-                    // It's a small icon button
-                    originalContent = element.innerHTML;
-                    element.innerHTML = '<div class="loader w-4 h-4"></div>';
-                }
-
-                const response = await fetch(url);
-                const blob = await response.blob();
-                const blobUrl = window.URL.createObjectURL(blob);
-                
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(blobUrl);
-                
-                if (isButton) {
-                    element.querySelector('.btn-label').textContent = "Berhasil!";
-                    setTimeout(() => element.querySelector('.btn-label').textContent = originalContent, 2000);
-                } else {
-                    element.innerHTML = '<i data-lucide="check" class="w-5 h-5 text-green-500"></i>';
-                    lucide.createIcons();
-                    setTimeout(() => {
-                        element.innerHTML = originalContent;
-                        lucide.createIcons();
-                    }, 2000);
-                }
-            } catch (error) {
-                console.error("Download error:", error);
-                window.open(url, '_blank');
-            } finally {
-                if (isButton) element.classList.remove('downloading');
-            }
+            lucide.createIcons();
         }
 
         function showError(msg) {
-            const errorMessage = document.getElementById('errorMessage');
             document.getElementById('errorText').textContent = msg;
-            errorMessage.classList.remove('hidden');
+            document.getElementById('errorMessage').classList.remove('hidden');
         }
 
         function formatNumber(num) {
@@ -337,10 +253,11 @@
             if (num >= 1000) return (num / 1000).toFixed(1) + 'rb';
             return num;
         }
-
-        document.getElementById('tiktokUrl').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleFetch();
-        });
     </script>
 </body>
 </html>
+"""
+
+# 3. Menampilkan HTML ke dalam aplikasi Streamlit
+# height diset besar agar scrollbar tidak dobel
+components.html(html_code, height=1200, scrolling=True)
